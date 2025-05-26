@@ -1,0 +1,57 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ApiDemoComponent from '../components/ApiDemo';
+---
+
+<Layout title="API演示">
+	<div class="container mx-auto p-4">
+		<h1 class="text-3xl font-bold mb-6 dark:text-white">Axios API 请求演示</h1>
+		
+		<div class="mb-8">
+			<p class="text-gray-700 dark:text-gray-300 mb-4">
+				这个页面展示了如何使用封装的Axios请求工具与后端API进行通信。
+				下面的组件会尝试连接到后端的健康检查API。
+			</p>
+			
+			<div class="bg-blue-100 dark:bg-blue-900 p-4 rounded-lg">
+				<h3 class="font-semibold text-blue-800 dark:text-blue-200 mb-2">请求工具特点：</h3>
+				<ul class="list-disc list-inside text-blue-800 dark:text-blue-200">
+					<li>统一的请求/响应拦截器</li>
+					<li>自动处理错误状态码</li>
+					<li>自动添加认证Token</li>
+					<li>类型安全的请求和响应</li>
+				</ul>
+			</div>
+		</div>
+		
+		<ApiDemoComponent client:load />
+		
+		<div class="mt-8 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+			<h2 class="text-2xl font-semibold mb-4 dark:text-white">项目结构</h2>
+			<p class="text-gray-700 dark:text-gray-300 mb-4">
+				Axios请求封装分为两层：
+			</p>
+			<ol class="list-decimal list-inside space-y-2 text-gray-700 dark:text-gray-300">
+				<li><strong>请求工具层 (utils/request.ts)</strong> - 提供基础请求方法和拦截器</li>
+				<li><strong>API服务层 (services/api.ts)</strong> - 定义具体的API端点和数据类型</li>
+				<li><strong>组件层 (components/ApiDemo.tsx)</strong> - 使用API服务与后端通信</li>
+			</ol>
+		</div>
+	</div>
+</Layout>
+
+<style>
+	/* 这些样式支持深色模式 */
+	:global(html.dark) {
+		background-color: #1a202c;
+		color: #e2e8f0;
+	}
+</style>
+
+<script>
+	// 初始化主题
+	document.addEventListener('DOMContentLoaded', () => {
+		const theme = localStorage.getItem('theme') || 'light';
+		document.documentElement.classList.add(theme);
+	});
+</script> 

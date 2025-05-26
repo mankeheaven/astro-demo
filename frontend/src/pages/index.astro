@@ -1,0 +1,148 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="首页">
+	<main class="container mx-auto p-4">
+		<h1 class="text-4xl font-bold mb-6 text-center dark:text-white">
+			🚀 Astro 多框架演示项目
+		</h1>
+		<p class="mb-8 text-center text-gray-600 dark:text-gray-300">
+			这是一个展示Astro框架强大功能的演示项目，包含React、Vue和原生JavaScript的集成。
+		</p>
+		
+		<!-- 功能导航 -->
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+			<!-- 跨框架状态共享 -->
+			<div class="bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 p-6 rounded-lg shadow-lg">
+				<h3 class="text-xl font-bold mb-3 text-blue-600 dark:text-blue-400">
+					🌐 跨框架状态共享
+				</h3>
+				<p class="text-gray-700 dark:text-gray-300 mb-4">
+					演示React、Vue和Vanilla JS如何共享同一个全局状态
+				</p>
+				<div class="space-y-2">
+					<a href="/cross-framework" 
+					   class="block w-full bg-blue-500 hover:bg-blue-600 text-white text-center py-2 px-4 rounded">
+						Astro集成演示
+					</a>
+					<a href="/vanilla-demo.html" 
+					   class="block w-full bg-yellow-500 hover:bg-yellow-600 text-white text-center py-2 px-4 rounded">
+						纯HTML演示
+					</a>
+				</div>
+			</div>
+			
+			<!-- 环境配置 -->
+			<div class="bg-gradient-to-br from-green-100 to-teal-100 dark:from-green-900 dark:to-teal-900 p-6 rounded-lg shadow-lg">
+				<h3 class="text-xl font-bold mb-3 text-green-600 dark:text-green-400">
+					⚙️ 环境配置
+				</h3>
+				<p class="text-gray-700 dark:text-gray-300 mb-4">
+					多环境构建配置和环境变量管理
+				</p>
+				<a href="/env-demo" 
+				   class="block w-full bg-green-500 hover:bg-green-600 text-white text-center py-2 px-4 rounded">
+					查看环境配置
+				</a>
+			</div>
+			
+			<!-- 全局状态管理 -->
+			<div class="bg-gradient-to-br from-orange-100 to-red-100 dark:from-orange-900 dark:to-red-900 p-6 rounded-lg shadow-lg">
+				<h3 class="text-xl font-bold mb-3 text-orange-600 dark:text-orange-400">
+					🔄 Zustand状态管理
+				</h3>
+				<p class="text-gray-700 dark:text-gray-300 mb-4">
+					使用Zustand进行页面间状态共享
+				</p>
+				<div class="space-y-2">
+					<a href="/global-state-page1" 
+					   class="block w-full bg-orange-500 hover:bg-orange-600 text-white text-center py-2 px-4 rounded">
+						页面1
+					</a>
+					<a href="/global-state-page2" 
+					   class="block w-full bg-red-500 hover:bg-red-600 text-white text-center py-2 px-4 rounded">
+						页面2
+					</a>
+				</div>
+			</div>
+		</div>
+		
+		<!-- API测试 -->
+		<div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+			<h2 class="text-2xl font-semibold mb-4 dark:text-white">🔗 API连接测试</h2>
+			<p class="text-gray-600 dark:text-gray-300 mb-4">
+				测试与后端API的连接状态
+			</p>
+			<button id="checkApi" 
+			        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+				检查API状态
+			</button>
+			<div id="apiStatus" class="mt-4"></div>
+		</div>
+		
+		<!-- 技术栈说明 -->
+		<div class="mt-12 bg-gray-100 dark:bg-gray-800 p-6 rounded-lg">
+			<h2 class="text-2xl font-bold mb-4 dark:text-white">🛠️ 技术栈</h2>
+			<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+				<div class="text-center">
+					<div class="text-2xl mb-2">⚡</div>
+					<div class="font-semibold dark:text-white">Astro</div>
+					<div class="text-sm text-gray-600 dark:text-gray-400">静态站点生成</div>
+				</div>
+				<div class="text-center">
+					<div class="text-2xl mb-2">⚛️</div>
+					<div class="font-semibold dark:text-white">React</div>
+					<div class="text-sm text-gray-600 dark:text-gray-400">组件库</div>
+				</div>
+				<div class="text-center">
+					<div class="text-2xl mb-2">💚</div>
+					<div class="font-semibold dark:text-white">Vue</div>
+					<div class="text-sm text-gray-600 dark:text-gray-400">渐进式框架</div>
+				</div>
+				<div class="text-center">
+					<div class="text-2xl mb-2">🎨</div>
+					<div class="font-semibold dark:text-white">Tailwind</div>
+					<div class="text-sm text-gray-600 dark:text-gray-400">CSS框架</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</Layout>
+
+<style>
+	:global(html.dark) {
+		background-color: #1a202c;
+		color: #e2e8f0;
+	}
+</style>
+
+<script>
+	// API状态检查
+	document.getElementById('checkApi')?.addEventListener('click', async () => {
+		const statusDiv = document.getElementById('apiStatus');
+		if (!statusDiv) return;
+		
+		statusDiv.innerHTML = '<div class="p-4 bg-blue-100 text-blue-800 rounded">检查中...</div>';
+		
+		try {
+			const response = await fetch('http://localhost:8080/api/health');
+			const data = await response.json();
+			statusDiv.innerHTML = 
+				`<div class="p-4 bg-green-100 text-green-800 rounded">
+					✅ API状态: ${data.status}
+				</div>`;
+		} catch (error) {
+			statusDiv.innerHTML = 
+				`<div class="p-4 bg-red-100 text-red-800 rounded">
+					❌ 无法连接到API: ${error}
+				</div>`;
+		}
+	});
+	
+	// 初始化主题
+	document.addEventListener('DOMContentLoaded', () => {
+		const theme = localStorage.getItem('theme') || 'light';
+		document.documentElement.classList.add(theme);
+	});
+</script> 

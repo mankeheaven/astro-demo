@@ -1,0 +1,53 @@
+---
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="zh-CN" class="h-full">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title} | Astro + Echo 项目</title>
+	</head>
+	<body class="flex flex-col min-h-screen">
+		<header class="bg-gray-800 text-white p-4">
+			<div class="container mx-auto flex justify-between items-center">
+				<div class="font-bold text-xl">Astro + Echo 项目</div>
+				<nav>
+					<ul class="flex space-x-4">
+						<li><a href="/" class="hover:text-blue-300">首页</a></li>
+						<li><a href="/about" class="hover:text-blue-300">关于</a></li>
+						<li><a href="/react" class="hover:text-blue-300">React演示</a></li>
+						<li><a href="/shared-state" class="hover:text-blue-300">状态共享</a></li>
+						<li><a href="/user-profile" class="hover:text-blue-300">用户资料</a></li>
+						<li><a href="/global-state-page1" class="hover:text-blue-300">全局状态</a></li>
+						<li><a href="/api-demo" class="hover:text-blue-300">API演示</a></li>
+						<li><a href="/env-demo" class="hover:text-blue-300">环境变量</a></li>
+					</ul>
+				</nav>
+			</div>
+		</header>
+
+		<main class="flex-grow">
+			<slot />
+		</main>
+
+		<footer class="bg-gray-800 text-white p-4 mt-auto">
+			<div class="container mx-auto text-center">
+				<p>© {new Date().getFullYear()} Astro + Echo 项目</p>
+			</div>
+		</footer>
+	</body>
+</html>
+
+<style is:global>
+	@tailwind base;
+	@tailwind components;
+	@tailwind utilities;
+</style> 

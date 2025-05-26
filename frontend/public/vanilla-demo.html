@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>原生JavaScript - 跨框架状态共享</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        html.dark {
+            background-color: #1a202c;
+            color: #e2e8f0;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div class="container mx-auto p-4">
+        <h1 class="text-4xl font-bold mb-6 text-center dark:text-white">
+            🟡 纯HTML + Vanilla JS 演示
+        </h1>
+        
+        <div class="mb-8 bg-yellow-100 dark:bg-yellow-900 p-6 rounded-lg">
+            <h2 class="text-2xl font-bold mb-4 dark:text-white">说明</h2>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+                这是一个纯HTML页面，使用原生JavaScript来演示跨框架状态共享。
+                这个页面与Astro项目中的React和Vue组件共享同一个全局状态。
+            </p>
+            <p class="text-gray-700 dark:text-gray-300">
+                <strong>测试方法：</strong> 
+                <br>1. 在这个页面修改状态
+                <br>2. 打开 <a href="/cross-framework" class="text-blue-600 underline">跨框架演示页面</a>
+                <br>3. 观察状态是否同步
+            </p>
+        </div>
+        
+        <!-- 状态显示容器 -->
+        <div id="vanilla-state-container" class="mb-8">
+            <!-- 组件将在这里渲染 -->
+        </div>
+        
+        <div class="bg-gray-200 dark:bg-gray-700 p-6 rounded-lg">
+            <h3 class="text-lg font-bold mb-4 dark:text-white">技术说明</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <h4 class="font-semibold mb-2 dark:text-white">实现原理</h4>
+                    <ul class="list-disc list-inside text-sm text-gray-700 dark:text-gray-300">
+                        <li>使用localStorage作为数据持久化</li>
+                        <li>监听storage事件实现跨标签页同步</li>
+                        <li>发布-订阅模式管理状态变化</li>
+                        <li>框架无关的纯JavaScript实现</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-2 dark:text-white">优势</h4>
+                    <ul class="list-disc list-inside text-sm text-gray-700 dark:text-gray-300">
+                        <li>无框架依赖，轻量级</li>
+                        <li>支持任意前端框架</li>
+                        <li>易于集成和迁移</li>
+                        <li>跨页面状态持久化</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 通用状态管理器 -->
+    <script type="module">
+        // 通用状态管理器 - 内联版本
+        class UniversalStore {
+            constructor() {
+                this.state = {
+                    sharedCounter: 0,
+                    sharedMessages: [],
+                    currentUser: { name: '匿名用户', framework: 'unknown' },
+                    theme: 'light',
+                    lastUpdated: new Date().toISOString()
+                };
+                
+                this.subscribers = new Set();
+                this.loadFromStorage();
+                
+                if (typeof window !== 'undefined') {
+                    window.addEventListener('storage', (e) => {
+                        if (e.key === 'universal-store') {
+                            this.loadFromStorage();
+                            this.notifySubscribers();
+                        }
+                    });
+                }
+            }
+            
+            getState() {
+                return { ...this.state };
+            }
+            
+            setState(updates) {
+                const oldState = { ...this.state };
+                this.state = {
+                    ...this.state,
+                    ...updates,
+                    lastUpdated: new Date().toISOString()
+                };
+                
+                this.saveToStorage();
+                this.notifySubscribers(oldState, this.state);
+            }
+            
+            subscribe(callback) {
+                this.subscribers.add(callback);
+                return () => this.subscribers.delete(callback);
+            }
+            
+            notifySubscribers(oldState = null, newState = null) {
+                this.subscribers.forEach(callback => {
+                    try {
+                        callback(newState || this.state, oldState);
+                    } catch (error) {
+                        console.error('订阅者回调执行错误:', error);
+                    }
+                });
+            }
+            
+            loadFromStorage() {
+                try {
+                    const stored = localStorage.getItem('universal-store');
+                    if (stored) {
+                        const parsedState = JSON.parse(stored);
+                        this.state = { ...this.state, ...parsedState };
+                    }
+                } catch (error) {
+                    console.error('从localStorage加载状态失败:', error);
+                }
+            }
+            
+            saveToStorage() {
+                try {
+                    localStorage.setItem('universal-store', JSON.stringify(this.state));
+                } catch (error) {
+                    console.error('保存状态到localStorage失败:', error);
+                }
+            }
+            
+            incrementCounter() {
+                this.setState({ sharedCounter: this.state.sharedCounter + 1 });
+                this.addMessage(`计数器增加到 ${this.state.sharedCounter + 1}`);
+            }
+            
+            decrementCounter() {
+                this.setState({ sharedCounter: Math.max(0, this.state.sharedCounter - 1) });
+                this.addMessage(`计数器减少到 ${Math.max(0, this.state.sharedCounter - 1)}`);
+            }
+            
+            resetCounter() {
+                this.setState({ sharedCounter: 0 });
+                this.addMessage('计数器已重置');
+            }
+            
+            addMessage(message, framework = 'unknown') {
+                const newMessage = {
+                    id: Date.now(),
+                    text: message,
+                    framework: framework,
+                    timestamp: new Date().toLocaleTimeString()
+                };
+                
+                this.setState({
+                    sharedMessages: [...this.state.sharedMessages, newMessage].slice(-10)
+                });
+            }
+            
+            clearMessages() {
+                this.setState({ sharedMessages: [] });
+            }
+            
+            setUser(name, framework) {
+                this.setState({ currentUser: { name, framework } });
+                this.addMessage(`用户 ${name} 从 ${framework} 框架加入`, framework);
+            }
+            
+            toggleTheme() {
+                const newTheme = this.state.theme === 'light' ? 'dark' : 'light';
+                this.setState({ theme: newTheme });
+                this.addMessage(`主题切换为 ${newTheme}`);
+                
+                // 更新页面主题
+                document.documentElement.classList.remove('light', 'dark');
+                document.documentElement.classList.add(newTheme);
+            }
+        }
+
+        // 创建全局实例
+        const universalStore = new UniversalStore();
+
+        // Vanilla JS 组件
+        class VanillaStateComponent {
+            constructor(container) {
+                this.container = container;
+                this.state = universalStore.getState();
+                this.unsubscribe = null;
+                this.init();
+            }
+            
+            init() {
+                universalStore.setUser('HTML页面用户', 'Vanilla');
+                this.unsubscribe = universalStore.subscribe((newState) => {
+                    this.state = newState;
+                    this.render();
+                });
+                this.render();
+            }
+            
+            render() {
+                const { sharedCounter, sharedMessages, currentUser, theme, lastUpdated } = this.state;
+                
+                this.container.innerHTML = `
+                    <div class="p-6 rounded-lg shadow-lg border-2 border-yellow-200 ${
+                        theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-yellow-50 text-gray-800'
+                    }">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-2xl font-bold text-yellow-600">
+                                🟡 纯HTML Vanilla JS 组件
+                            </h2>
+                            <span class="text-sm opacity-75">
+                                最后更新: ${new Date(lastUpdated).toLocaleTimeString()}
+                            </span>
+                        </div>
+                        
+                        <div class="mb-6 p-4 bg-white dark:bg-gray-700 rounded-lg">
+                            <h3 class="font-semibold mb-2">当前用户信息</h3>
+                            <p>姓名: <span class="font-mono">${currentUser.name}</span></p>
+                            <p>框架: <span class="font-mono">${currentUser.framework}</span></p>
+                            
+                            <div class="mt-3 flex gap-2">
+                                <input id="user-input" type="text" placeholder="输入新用户名" 
+                                       class="flex-1 px-3 py-1 border rounded text-black" />
+                                <button id="set-user-btn" 
+                                        class="px-4 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600">
+                                    设置
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6 p-4 bg-white dark:bg-gray-700 rounded-lg">
+                            <h3 class="font-semibold mb-3">共享计数器</h3>
+                            <div class="text-center">
+                                <div class="text-4xl font-bold mb-4 text-yellow-600">${sharedCounter}</div>
+                                <div class="flex justify-center gap-2">
+                                    <button id="decrement-btn" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">-1</button>
+                                    <button id="reset-btn" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">重置</button>
+                                    <button id="increment-btn" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">+1</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6 p-4 bg-white dark:bg-gray-700 rounded-lg">
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="font-semibold">共享消息</h3>
+                                <button id="clear-messages-btn" class="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600">清除</button>
+                            </div>
+                            
+                            <div class="mb-3 flex gap-2">
+                                <input id="message-input" type="text" placeholder="输入消息" 
+                                       class="flex-1 px-3 py-1 border rounded text-black" />
+                                <button id="send-message-btn" class="px-4 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600">发送</button>
+                            </div>
+                            
+                            <div class="max-h-40 overflow-y-auto border rounded p-2 bg-gray-50 dark:bg-gray-600">
+                                ${sharedMessages.length > 0 ? `
+                                    <ul class="space-y-1">
+                                        ${sharedMessages.map(msg => `
+                                            <li class="text-sm">
+                                                <span class="text-gray-500">[${msg.timestamp}]</span>
+                                                <span class="ml-1 px-1 rounded text-xs ${
+                                                    msg.framework === 'React' ? 'bg-blue-200 text-blue-800' :
+                                                    msg.framework === 'Vue' ? 'bg-green-200 text-green-800' :
+                                                    msg.framework === 'Vanilla' ? 'bg-yellow-200 text-yellow-800' :
+                                                    'bg-gray-200 text-gray-800'
+                                                }">${msg.framework}</span>
+                                                <span class="ml-2">${msg.text}</span>
+                                            </li>
+                                        `).join('')}
+                                    </ul>
+                                ` : `<p class="text-gray-500 text-center italic">暂无消息</p>`}
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-white dark:bg-gray-700 rounded-lg">
+                            <div class="flex justify-between items-center">
+                                <span class="font-semibold">当前主题: ${theme}</span>
+                                <button id="toggle-theme-btn" class="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600">切换主题</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                this.bindEvents();
+            }
+            
+            bindEvents() {
+                // 计数器
+                this.container.querySelector('#increment-btn')?.addEventListener('click', () => universalStore.incrementCounter());
+                this.container.querySelector('#decrement-btn')?.addEventListener('click', () => universalStore.decrementCounter());
+                this.container.querySelector('#reset-btn')?.addEventListener('click', () => universalStore.resetCounter());
+                
+                // 用户设置
+                const userInput = this.container.querySelector('#user-input');
+                const setUserBtn = this.container.querySelector('#set-user-btn');
+                const handleSetUser = () => {
+                    if (userInput?.value.trim()) {
+                        universalStore.setUser(userInput.value.trim(), 'Vanilla');
+                        userInput.value = '';
+                    }
+                };
+                setUserBtn?.addEventListener('click', handleSetUser);
+                userInput?.addEventListener('keypress', (e) => e.key === 'Enter' && handleSetUser());
+                
+                // 消息
+                const messageInput = this.container.querySelector('#message-input');
+                const sendMessageBtn = this.container.querySelector('#send-message-btn');
+                const handleSendMessage = () => {
+                    if (messageInput?.value.trim()) {
+                        universalStore.addMessage(messageInput.value.trim(), 'Vanilla');
+                        messageInput.value = '';
+                    }
+                };
+                sendMessageBtn?.addEventListener('click', handleSendMessage);
+                messageInput?.addEventListener('keypress', (e) => e.key === 'Enter' && handleSendMessage());
+                this.container.querySelector('#clear-messages-btn')?.addEventListener('click', () => universalStore.clearMessages());
+                
+                // 主题
+                this.container.querySelector('#toggle-theme-btn')?.addEventListener('click', () => universalStore.toggleTheme());
+            }
+            
+            destroy() {
+                if (this.unsubscribe) this.unsubscribe();
+            }
+        }
+
+        // 初始化组件
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('vanilla-state-container');
+            if (container) {
+                const component = new VanillaStateComponent(container);
+                
+                // 初始化主题
+                const theme = universalStore.getState().theme;
+                document.documentElement.classList.add(theme);
+                
+                // 清理
+                window.addEventListener('beforeunload', () => component.destroy());
+            }
+        });
+    </script>
+</body>
+</html> 

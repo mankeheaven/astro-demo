@@ -1,0 +1,42 @@
+---
+import SimpleLayout from '../layouts/SimpleLayout.astro';
+import StateDisplayWrapper from '../components/StateDisplayWrapper';
+---
+
+<SimpleLayout title="关于">
+	<div class="max-w-4xl mx-auto">
+		<h1 class="text-4xl font-bold mb-6 dark:text-white">关于页面 (使用新布局)</h1>
+		
+		<div class="mb-8 bg-yellow-100 dark:bg-yellow-900 p-4 rounded-lg">
+			<p class="text-yellow-800 dark:text-yellow-200">
+				这个页面使用了不同的布局组件 (SimpleLayout)，但仍然能够访问全局状态。
+				以下展示了从UserContext和GlobalStore中获取的数据。
+			</p>
+		</div>
+		
+		<StateDisplayWrapper client:load />
+		
+		<div class="mt-10 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+			<h2 class="text-2xl font-bold mb-4 dark:text-white">为什么状态仍然可用？</h2>
+			<ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+				<li>
+					<strong>UserContext</strong> - 通过包装组件 (StateDisplayWrapper) 提供上下文，即使在不同布局中也能正常工作
+				</li>
+				<li>
+					<strong>GlobalStore (Zustand)</strong> - 作为全局存储，不依赖React组件树结构，在任何组件中都可直接访问
+				</li>
+				<li>
+					<strong>LocalStorage持久化</strong> - 两种状态管理方式都使用localStorage存储，因此在页面刷新或导航后仍然保持状态
+				</li>
+			</ul>
+		</div>
+	</div>
+</SimpleLayout>
+
+<script>
+	// 初始化主题
+	document.addEventListener('DOMContentLoaded', () => {
+		const theme = localStorage.getItem('theme') || 'light';
+		document.documentElement.classList.add(theme);
+	});
+</script> 

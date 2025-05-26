@@ -1,0 +1,12 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Counter from '../components/Counter';
+---
+
+<Layout title="React演示">
+	<div class="container mx-auto p-4">
+		<h1 class="text-3xl font-bold mb-6">React 组件演示</h1>
+		
+		<Counter client:load />
+	</div>
+</Layout> 

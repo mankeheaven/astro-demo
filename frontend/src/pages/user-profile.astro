@@ -1,0 +1,47 @@
+---
+import Layout from '../layouts/Layout.astro';
+import UserProfileWrapper from '../components/UserProfile';
+---
+
+<Layout title="用户资料">
+	<div class="container mx-auto p-4">
+		<h1 class="text-3xl font-bold mb-6 dark:text-white">用户资料页面</h1>
+		
+		<div class="bg-blue-100 dark:bg-blue-900 p-4 mb-6 rounded-lg">
+			<p class="text-blue-800 dark:text-blue-200">
+				这个页面展示了从<a href="/shared-state" class="underline font-semibold">状态共享</a>页面获取的相同用户数据。
+				任何在那个页面所做的更改都会反映在这里，因为数据存储在localStorage中。
+			</p>
+		</div>
+		
+		<UserProfileWrapper client:load />
+		
+		<div class="mt-8">
+			<h2 class="text-2xl font-semibold mb-4 dark:text-white">跨页面状态共享原理</h2>
+			<div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+				<ol class="list-decimal list-inside space-y-2 text-gray-800 dark:text-gray-200">
+					<li>用户数据存储在浏览器的localStorage中</li>
+					<li>每个页面加载时都会从localStorage读取数据</li>
+					<li>当用户在任何页面更改数据时，localStorage会更新</li>
+					<li>其他页面刷新后会读取到最新的数据</li>
+				</ol>
+			</div>
+		</div>
+	</div>
+</Layout>
+
+<style>
+	/* 这些样式支持深色模式 */
+	:global(html.dark) {
+		background-color: #1a202c;
+		color: #e2e8f0;
+	}
+</style>
+
+<script>
+	// 初始化主题
+	document.addEventListener('DOMContentLoaded', () => {
+		const theme = localStorage.getItem('theme') || 'light';
+		document.documentElement.classList.add(theme);
+	});
+</script> 

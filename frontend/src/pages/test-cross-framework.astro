@@ -1,0 +1,224 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="跨框架功能测试">
+	<div class="container mx-auto p-4">
+		<h1 class="text-3xl font-bold mb-6 text-center">🧪 跨框架功能测试</h1>
+		
+		<div class="mb-6 bg-blue-100 p-4 rounded-lg">
+			<h2 class="text-xl font-bold mb-2">测试说明</h2>
+			<p>这个页面用于测试跨框架状态共享功能。请打开浏览器控制台查看详细日志。</p>
+		</div>
+		
+		<!-- 状态显示 -->
+		<div id="state-display" class="mb-6 p-4 bg-gray-100 rounded-lg">
+			<h3 class="font-bold mb-2">当前状态</h3>
+			<pre id="state-content">加载中...</pre>
+		</div>
+		
+		<!-- 控制按钮 -->
+		<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+			<button id="increment-btn" class="bg-green-500 text-white p-3 rounded hover:bg-green-600">
+				增加计数器
+			</button>
+			<button id="decrement-btn" class="bg-red-500 text-white p-3 rounded hover:bg-red-600">
+				减少计数器
+			</button>
+			<button id="reset-btn" class="bg-gray-500 text-white p-3 rounded hover:bg-gray-600">
+				重置计数器
+			</button>
+			<button id="toggle-theme-btn" class="bg-purple-500 text-white p-3 rounded hover:bg-purple-600">
+				切换主题
+			</button>
+		</div>
+		
+		<!-- 消息测试 -->
+		<div class="mb-6">
+			<div class="flex gap-2 mb-4">
+				<input id="message-input" type="text" placeholder="输入测试消息" 
+				       class="flex-1 p-2 border rounded">
+				<button id="send-message-btn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+					发送消息
+				</button>
+				<button id="clear-messages-btn" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
+					清除消息
+				</button>
+			</div>
+		</div>
+		
+		<!-- 日志显示 -->
+		<div class="bg-black text-green-400 p-4 rounded-lg font-mono text-sm">
+			<h3 class="text-white font-bold mb-2">实时日志</h3>
+			<div id="log-container" class="max-h-60 overflow-y-auto">
+				<div>等待日志...</div>
+			</div>
+		</div>
+	</div>
+</Layout>
+
+<script>
+	// 类型定义
+	interface UniversalState {
+		sharedCounter: number;
+		sharedMessages: Array<{
+			id: number;
+			text: string;
+			framework: string;
+			timestamp: string;
+		}>;
+		currentUser: {
+			name: string;
+			framework: string;
+		};
+		theme: string;
+		lastUpdated: string;
+	}
+
+	// 日志记录函数
+	function addLog(message: string): void {
+		const logContainer = document.getElementById('log-container');
+		if (!logContainer) return;
+		
+		const timestamp = new Date().toLocaleTimeString();
+		const logEntry = document.createElement('div');
+		logEntry.textContent = `[${timestamp}] ${message}`;
+		logContainer.appendChild(logEntry);
+		logContainer.scrollTop = logContainer.scrollHeight;
+	}
+	
+	// 更新状态显示
+	function updateStateDisplay(state: UniversalState): void {
+		const stateContent = document.getElementById('state-content');
+		if (stateContent) {
+			stateContent.textContent = JSON.stringify(state, null, 2);
+		}
+	}
+	
+	// 初始化测试
+	async function initTest(): Promise<void> {
+		try {
+			addLog('开始初始化跨框架状态管理器...');
+			
+			// 动态导入状态管理器
+			const { default: universalStore } = await import('../stores/universalStore.js');
+			
+			addLog('状态管理器导入成功');
+			
+			// 获取初始状态
+			const initialState = universalStore.getState();
+			updateStateDisplay(initialState);
+			addLog(`初始状态: ${JSON.stringify(initialState)}`);
+			
+			// 订阅状态变化
+			const unsubscribe = universalStore.subscribe((newState: UniversalState, oldState?: UniversalState) => {
+				addLog('状态变化通知收到');
+				updateStateDisplay(newState);
+				
+				if (oldState) {
+					addLog(`状态变化: ${JSON.stringify({
+						counter: { old: oldState.sharedCounter, new: newState.sharedCounter },
+						messages: { old: oldState.sharedMessages.length, new: newState.sharedMessages.length },
+						theme: { old: oldState.theme, new: newState.theme }
+					})}`);
+				}
+			});
+			
+			// 绑定按钮事件
+			const incrementBtn = document.getElementById('increment-btn');
+			if (incrementBtn) {
+				incrementBtn.addEventListener('click', () => {
+					addLog('点击增加按钮');
+					universalStore.incrementCounter();
+				});
+			}
+			
+			const decrementBtn = document.getElementById('decrement-btn');
+			if (decrementBtn) {
+				decrementBtn.addEventListener('click', () => {
+					addLog('点击减少按钮');
+					universalStore.decrementCounter();
+				});
+			}
+			
+			const resetBtn = document.getElementById('reset-btn');
+			if (resetBtn) {
+				resetBtn.addEventListener('click', () => {
+					addLog('点击重置按钮');
+					universalStore.resetCounter();
+				});
+			}
+			
+			const toggleThemeBtn = document.getElementById('toggle-theme-btn');
+			if (toggleThemeBtn) {
+				toggleThemeBtn.addEventListener('click', () => {
+					addLog('点击主题切换按钮');
+					universalStore.toggleTheme();
+				});
+			}
+			
+			const sendMessageBtn = document.getElementById('send-message-btn');
+			if (sendMessageBtn) {
+				sendMessageBtn.addEventListener('click', () => {
+					const input = document.getElementById('message-input') as HTMLInputElement;
+					if (input) {
+						const message = input.value.trim();
+						if (message) {
+							addLog(`发送消息: ${message}`);
+							universalStore.addMessage(message, 'Test');
+							input.value = '';
+						}
+					}
+				});
+			}
+			
+			const clearMessagesBtn = document.getElementById('clear-messages-btn');
+			if (clearMessagesBtn) {
+				clearMessagesBtn.addEventListener('click', () => {
+					addLog('清除所有消息');
+					universalStore.clearMessages();
+				});
+			}
+			
+			// 回车发送消息
+			const messageInput = document.getElementById('message-input') as HTMLInputElement;
+			if (messageInput) {
+				messageInput.addEventListener('keypress', (e) => {
+					if (e.key === 'Enter') {
+						sendMessageBtn?.click();
+					}
+				});
+			}
+			
+			// 设置测试用户
+			universalStore.setUser('测试用户', 'Test');
+			
+			addLog('✅ 测试页面初始化完成');
+			
+			// 页面卸载时清理
+			window.addEventListener('beforeunload', () => {
+				unsubscribe();
+				addLog('页面卸载，清理订阅');
+			});
+			
+		} catch (error) {
+			const errorMessage = error instanceof Error ? error.message : String(error);
+			addLog(`❌ 初始化失败: ${errorMessage}`);
+			console.error('测试页面初始化失败:', error);
+		}
+	}
+	
+	// 页面加载完成后初始化
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initTest);
+	} else {
+		initTest();
+	}
+</script>
+
+<style>
+	:global(html.dark) {
+		background-color: #1a202c;
+		color: #e2e8f0;
+	}
+</style> 

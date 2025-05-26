@@ -1,0 +1,43 @@
+---
+// 获取所有PUBLIC_开头的环境变量
+const publicEnvVars = Object.fromEntries(
+  Object.entries(import.meta.env).filter(([key]) => key.startsWith('PUBLIC_'))
+);
+
+// 当前环境
+const mode = import.meta.env.MODE;
+---
+
+<div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+  <h2 class="text-2xl font-bold mb-4 dark:text-white">环境变量信息</h2>
+  
+  <div class="mb-4">
+    <p class="text-gray-700 dark:text-gray-300">
+      <span class="font-semibold">当前环境:</span> 
+      <span class="px-2 py-1 rounded bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm font-mono">
+        {mode}
+      </span>
+    </p>
+  </div>
+  
+  <div>
+    <h3 class="font-semibold mb-2 dark:text-white">可用的公共环境变量:</h3>
+    <pre class="bg-gray-100 dark:bg-gray-900 p-3 rounded overflow-x-auto text-sm">
+      {JSON.stringify(publicEnvVars, null, 2)}
+    </pre>
+  </div>
+  
+  <div class="mt-6">
+    <h3 class="font-semibold mb-2 dark:text-white">API基础URL:</h3>
+    <p class="text-green-600 dark:text-green-400 font-mono">
+      {import.meta.env.PUBLIC_API_BASE_URL || '未设置'}
+    </p>
+  </div>
+  
+  <div class="mt-8 text-sm text-gray-500 dark:text-gray-400">
+    <p>
+      <span class="font-semibold">注意:</span> 只有以 <code class="bg-gray-200 dark:bg-gray-700 px-1 rounded">PUBLIC_</code> 
+      开头的环境变量才能在客户端代码中使用。
+    </p>
+  </div>
+</div> 

@@ -1,0 +1,44 @@
+---
+import Layout from '../layouts/Layout.astro';
+import EnvInfo from '../components/EnvInfo';
+---
+
+<Layout title="环境配置演示">
+	<div class="container mx-auto p-4">
+		<h1 class="text-3xl font-bold mb-6 dark:text-white">环境配置演示</h1>
+		
+		<div class="mb-6">
+			<p class="text-gray-600 dark:text-gray-300">
+				这个页面展示了如何在不同环境下使用不同的配置。
+				当前页面会显示从环境变量中读取的信息。
+			</p>
+		</div>
+		
+		<EnvInfo client:load />
+		
+		<div class="mt-8 bg-blue-50 dark:bg-blue-900 p-6 rounded-lg">
+			<h2 class="text-xl font-bold mb-4 dark:text-white">环境配置说明</h2>
+			<ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+				<li>开发环境: 启用调试模式，使用本地API</li>
+				<li>测试环境: 关闭调试模式，使用测试API</li>
+				<li>生产环境: 关闭调试模式，使用生产API</li>
+			</ul>
+		</div>
+	</div>
+</Layout>
+
+<style>
+	/* 这些样式支持深色模式 */
+	:global(html.dark) {
+		background-color: #1a202c;
+		color: #e2e8f0;
+	}
+</style>
+
+<script>
+	// 初始化主题
+	document.addEventListener('DOMContentLoaded', () => {
+		const theme = localStorage.getItem('theme') || 'light';
+		document.documentElement.classList.add(theme);
+	});
+</script> 

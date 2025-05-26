@@ -1,0 +1,28 @@
+---
+import Layout from '../layouts/Layout.astro';
+import App from '../components/App';
+---
+
+<Layout title="状态共享演示">
+	<div class="container mx-auto p-4">
+		<h1 class="text-3xl font-bold mb-6 dark:text-white">组件间状态共享</h1>
+		
+		<App client:load />
+	</div>
+</Layout>
+
+<style>
+	/* 这些样式支持深色模式 */
+	:global(html.dark) {
+		background-color: #1a202c;
+		color: #e2e8f0;
+	}
+</style>
+
+<script>
+	// 初始化主题
+	document.addEventListener('DOMContentLoaded', () => {
+		const theme = localStorage.getItem('theme') || 'light';
+		document.documentElement.classList.add(theme);
+	});
+</script> 
