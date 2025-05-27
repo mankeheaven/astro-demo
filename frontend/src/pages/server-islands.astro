@@ -2,6 +2,8 @@
 import Layout from '../layouts/Layout.astro';
 import ServerIslandDemo from '../components/ServerIslandDemo.astro';
 import InteractiveServerIsland from '../components/InteractiveServerIsland.tsx';
+import SystemMonitor from '../components/SystemMonitor.tsx';
+import { actions } from 'astro:actions';
 
 // 获取 URL 参数
 const url = new URL(Astro.request.url);
@@ -13,18 +15,101 @@ const interactiveData = {
   randomNumber: Math.floor(Math.random() * 1000)
 };
 
-// 模拟数据库查询
+// 获取真实的系统资源使用情况
 async function fetchDashboardData() {
-  // 模拟异步操作
-  await new Promise(resolve => setTimeout(resolve, 200));
-  
-  return {
-    totalUsers: Math.floor(Math.random() * 10000) + 1000,
-    activeUsers: Math.floor(Math.random() * 1000) + 100,
-    serverLoad: (Math.random() * 100).toFixed(1),
-    memoryUsage: (Math.random() * 8).toFixed(2),
-    lastUpdate: new Date().toLocaleString('zh-CN')
-  };
+  try {
+    const systemStatsResult = await Astro.callAction(actions.getSystemStats, {});
+    
+    if (systemStatsResult?.data?.success) {
+      const stats = systemStatsResult.data.stats;
+      
+      // 获取数据库统计信息
+      const dbStatsResult = await Astro.callAction(actions.statsGetDashboard, {});
+      const dbStats = dbStatsResult?.data?.success ? dbStatsResult.data.stats : null;
+      
+      return {
+        // 系统资源信息
+        cpuUsage: stats.cpu.usage,
+        cpuCores: stats.cpu.cores,
+        cpuModel: stats.cpu.model,
+        memoryUsed: stats.memory.used,
+        memoryTotal: stats.memory.total,
+        memoryUsagePercent: stats.memory.usagePercent,
+        
+        // 磁盘信息
+        diskUsed: stats.disk.used,
+        diskTotal: stats.disk.total,
+        diskUsagePercent: stats.disk.usagePercent,
+        
+        // 网络信息
+        networkReceived: stats.network.bytesReceived,
+        networkSent: stats.network.bytesSent,
+        
+        // 系统信息
+        platform: stats.system.platform,
+        arch: stats.system.arch,
+        hostname: stats.system.hostname,
+        uptime: stats.system.uptime,
+        nodeVersion: stats.system.nodeVersion,
+        
+        // 数据库统计
+        totalUsers: dbStats?.totalUsers || 0,
+        totalTasks: dbStats?.totalTasks || 0,
+        enabledTasks: dbStats?.enabledTasks || 0,
+        
+        lastUpdate: new Date(stats.timestamp).toLocaleString('zh-CN')
+      };
+    } else {
+      // 如果获取失败，返回默认数据
+      return {
+        cpuUsage: 0,
+        cpuCores: 0,
+        cpuModel: 'Unknown',
+        memoryUsed: 0,
+        memoryTotal: 0,
+        memoryUsagePercent: 0,
+        diskUsed: 0,
+        diskTotal: 0,
+        diskUsagePercent: 0,
+        networkReceived: 0,
+        networkSent: 0,
+        platform: 'Unknown',
+        arch: 'Unknown',
+        hostname: 'Unknown',
+        uptime: 0,
+        nodeVersion: 'Unknown',
+        totalUsers: 0,
+        totalTasks: 0,
+        enabledTasks: 0,
+        lastUpdate: new Date().toLocaleString('zh-CN')
+      };
+    }
+  } catch (error) {
+    console.error('获取系统统计信息失败:', error);
+    // 返回默认数据
+    return {
+      cpuUsage: 0,
+      cpuCores: 0,
+      cpuModel: 'Error',
+      memoryUsed: 0,
+      memoryTotal: 0,
+      memoryUsagePercent: 0,
+      diskUsed: 0,
+      diskTotal: 0,
+      diskUsagePercent: 0,
+      networkReceived: 0,
+      networkSent: 0,
+      platform: 'Error',
+      arch: 'Error',
+      hostname: 'Error',
+      uptime: 0,
+      nodeVersion: 'Error',
+      totalUsers: 0,
+      totalTasks: 0,
+      enabledTasks: 0,
+      lastUpdate: new Date().toLocaleString('zh-CN')
+    };
+  }
 }
 
 const dashboardData = await fetchDashboardData();
@@ -117,41 +202,11 @@ const dashboardData = await fetchDashboardData();
           client:load
         />
 
-        <!-- 仪表板服务器群岛 -->
-        <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-lg shadow-lg border border-purple-200">
-          <h2 class="text-2xl font-bold text-purple-800 mb-4 flex items-center">
-            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H9a2 2 0 01-2-2z"></path>
-            </svg>
-            实时仪表板
-          </h2>
-          
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="bg-white p-4 rounded-lg shadow text-center">
-              <div class="text-2xl font-bold text-blue-600">{dashboardData.totalUsers.toLocaleString()}</div>
-              <div class="text-sm text-gray-600">总用户数</div>
-            </div>
-            <div class="bg-white p-4 rounded-lg shadow text-center">
-              <div class="text-2xl font-bold text-green-600">{dashboardData.activeUsers.toLocaleString()}</div>
-              <div class="text-sm text-gray-600">活跃用户</div>
-            </div>
-            <div class="bg-white p-4 rounded-lg shadow text-center">
-              <div class="text-2xl font-bold text-orange-600">{dashboardData.serverLoad}%</div>
-              <div class="text-sm text-gray-600">服务器负载</div>
-            </div>
-            <div class="bg-white p-4 rounded-lg shadow text-center">
-              <div class="text-2xl font-bold text-red-600">{dashboardData.memoryUsage}GB</div>
-              <div class="text-sm text-gray-600">内存使用</div>
-            </div>
-          </div>
-          
-          <div class="mt-4 p-3 bg-white rounded-lg shadow">
-            <div class="flex justify-between items-center">
-              <span class="text-sm text-gray-600">最后更新:</span>
-              <span class="font-mono text-purple-600">{dashboardData.lastUpdate}</span>
-            </div>
-          </div>
-        </div>
+        <!-- 实时系统监控仪表板 -->
+        <SystemMonitor 
+          initialData={dashboardData}
+          client:load
+        />
       </div>
 
       <!-- 使用说明 -->

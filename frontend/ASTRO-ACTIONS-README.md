@@ -12,8 +12,7 @@ src/
 │   └── index.ts          # Actions 定义
 ├── components/
 │   └── ActionsDemo.tsx   # React 演示组件
-└── pages/
-    └── actions-demo.astro # 演示页面
+
 ```
 
 ## 🔧 功能特性
