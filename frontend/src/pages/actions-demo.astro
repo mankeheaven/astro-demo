@@ -1,0 +1,152 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ActionsDemoComponent from '../components/ActionsDemo';
+---
+
+<Layout title="Astro Actions 演示">
+  <main class="min-h-screen bg-gray-50 py-8">
+    <div class="container mx-auto px-4">
+      <!-- 页面标题和说明 -->
+      <div class="text-center mb-12">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">
+          🚀 Astro Actions 演示
+        </h1>
+        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+          Astro Actions 是 Astro 5.0 中引入的强大功能，允许您编写类型安全的后端函数，
+          可以直接从前端 JavaScript 客户端代码调用。本演示展示了各种 Actions 的使用场景。
+        </p>
+      </div>
+
+      <!-- 功能特性介绍 -->
+      <div class="grid md:grid-cols-3 gap-6 mb-12">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <div class="text-blue-500 text-2xl mb-3">🔒</div>
+          <h3 class="text-xl font-semibold mb-2">类型安全</h3>
+          <p class="text-gray-600">
+            使用 Zod 进行输入验证，确保数据类型安全和运行时验证。
+          </p>
+        </div>
+        
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <div class="text-green-500 text-2xl mb-3">⚡</div>
+          <h3 class="text-xl font-semibold mb-2">服务端执行</h3>
+          <p class="text-gray-600">
+            Actions 在服务器端安全执行，可以访问数据库、文件系统等服务端资源。
+          </p>
+        </div>
+        
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <div class="text-purple-500 text-2xl mb-3">🔄</div>
+          <h3 class="text-xl font-semibold mb-2">错误处理</h3>
+          <p class="text-gray-600">
+            内置错误处理机制，提供统一的错误响应格式和客户端错误处理。
+          </p>
+        </div>
+      </div>
+
+      <!-- Actions 演示组件 -->
+      <ActionsDemoComponent client:load />
+
+      <!-- 代码示例说明 */
+      <div class="mt-16 bg-white p-8 rounded-lg shadow-md">
+        <h2 class="text-2xl font-bold mb-6 text-gray-800">📝 代码示例</h2>
+        
+        <div class="space-y-6">
+          <div>
+            <h3 class="text-lg font-semibold mb-3 text-gray-700">1. 定义 Action</h3>
+            <pre class="bg-gray-100 p-4 rounded-lg overflow-x-auto text-sm"><code>{`import { defineAction } from 'astro:actions';
+import { z } from 'astro:schema';
+
+export const registerUser = defineAction({
+  accept: 'form',
+  input: z.object({
+    username: z.string().min(3, '用户名至少3个字符'),
+    email: z.string().email('请输入有效的邮箱地址'),
+    password: z.string().min(6, '密码至少6个字符'),
+  }),
+  handler: async (input) => {
+    // 服务端逻辑
+    return {
+      success: true,
+      message: \`用户 \${input.username} 注册成功！\`,
+      user: { /* 用户数据 */ }
+    };
+  }
+});`}</code></pre>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-semibold mb-3 text-gray-700">2. 在客户端调用</h3>
+            <pre class="bg-gray-100 p-4 rounded-lg overflow-x-auto text-sm"><code>{`import { registerUser } from '../actions';
+
+const handleSubmit = async (formData) => {
+  const response = await registerUser(formData);
+  
+  if (response.error) {
+    console.error('注册失败:', response.error.message);
+  } else {
+    console.log('注册成功:', response.data);
+  }
+};`}</code></pre>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-semibold mb-3 text-gray-700">3. 支持的数据类型</h3>
+            <ul class="list-disc list-inside text-gray-600 space-y-1">
+              <li><code>accept: 'form'</code> - 支持 FormData，适用于表单提交和文件上传</li>
+              <li><code>accept: 'json'</code> - 支持 JSON 数据，适用于 API 调用</li>
+              <li>自动类型推断和 TypeScript 支持</li>
+              <li>内置错误处理和验证</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 使用指南 */
+      <div class="mt-8 bg-blue-50 p-6 rounded-lg border border-blue-200">
+        <h3 class="text-lg font-semibold mb-3 text-blue-800">💡 使用提示</h3>
+        <ul class="text-blue-700 space-y-2">
+          <li>• 在用户注册表单中，尝试输入用户名 "admin" 来测试错误处理</li>
+          <li>• 用户查询功能支持 ID: 1, 2, 3，其他 ID 会返回"用户不存在"错误</li>
+          <li>• 文件上传支持图片和 PDF 文件，最大 5MB</li>
+          <li>• 计算器支持除零错误处理</li>
+          <li>• 待办事项演示了 CRUD 操作的完整流程</li>
+        </ul>
+      </div>
+
+      <!-- 导航链接 */
+      <div class="mt-12 text-center">
+        <div class="space-x-4">
+          <a 
+            href="/" 
+            class="inline-block bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors"
+          >
+            返回首页
+          </a>
+          <a 
+            href="/server-islands" 
+            class="inline-block bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors"
+          >
+            查看服务器群岛演示
+          </a>
+          <a 
+            href="/api-demo" 
+            class="inline-block bg-purple-500 text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition-colors"
+          >
+            查看 API 演示
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  code {
+    @apply bg-gray-200 px-1 py-0.5 rounded text-sm;
+  }
+  
+  pre code {
+    @apply bg-transparent p-0;
+  }
+</style> 

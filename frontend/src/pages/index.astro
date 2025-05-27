@@ -2,8 +2,191 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="首页">
-	<main class="container mx-auto p-4">
+<Layout title="Astro 全栈演示">
+	<main class="container mx-auto px-4 py-8">
+		<div class="text-center mb-12">
+			<h1 class="text-4xl font-bold text-gray-900 mb-4">
+				欢迎来到 <span class="text-gradient">Astro</span> 全栈演示
+			</h1>
+			<p class="text-xl text-gray-600 max-w-2xl mx-auto">
+				探索 Astro 5.8.0 的强大功能：Actions、数据库集成、定时任务等
+			</p>
+		</div>
+
+		<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+			<!-- Actions 演示 -->
+			<div class="card">
+				<h2 class="text-xl font-semibold mb-3">🎯 Actions 演示</h2>
+				<p class="text-gray-600 mb-4">
+					体验 Astro Actions 的强大功能，包括表单处理、数据验证等
+				</p>
+				<a href="/actions-demo" class="btn-primary">
+					查看演示
+				</a>
+			</div>
+
+			<!-- SQLite 数据库 -->
+			<div class="card">
+				<h2 class="text-xl font-semibold mb-3">🗄️ SQLite 数据库</h2>
+				<p class="text-gray-600 mb-4">
+					完整的 SQLite 数据库集成，包含用户管理、任务调度等功能
+				</p>
+				<a href="/database-demo" class="btn-primary">
+					数据库演示
+				</a>
+			</div>
+
+			<!-- Actions 测试 -->
+			<div class="card">
+				<h2 class="text-xl font-semibold mb-3">🧪 Actions 测试</h2>
+				<p class="text-gray-600 mb-4">
+					测试各种 Actions 功能，包括用户注册、计算器、数据库操作等
+				</p>
+				<a href="/test-actions" class="btn-primary">
+					测试 Actions
+				</a>
+			</div>
+
+			<!-- 组件演示 -->
+			<div class="card">
+				<h2 class="text-xl font-semibold mb-3">⚛️ React 组件</h2>
+				<p class="text-gray-600 mb-4">
+					展示 React 组件在 Astro 中的集成和交互功能
+				</p>
+				<a href="/react-demo" class="btn-primary">
+					React 演示
+				</a>
+			</div>
+
+			<!-- Vue 组件 -->
+			<div class="card">
+				<h2 class="text-xl font-semibold mb-3">💚 Vue 组件</h2>
+				<p class="text-gray-600 mb-4">
+					体验 Vue 组件的响应式特性和 Astro 的无缝集成
+				</p>
+				<a href="/vue-demo" class="btn-primary">
+					Vue 演示
+				</a>
+			</div>
+
+			<!-- API 路由 -->
+			<div class="card">
+				<h2 class="text-xl font-semibold mb-3">🔌 API 路由</h2>
+				<p class="text-gray-600 mb-4">
+					探索 Astro 的 API 路由功能，构建 RESTful 接口
+				</p>
+				<a href="/api-demo" class="btn-primary">
+					API 演示
+				</a>
+			</div>
+		</div>
+
+		<!-- 技术栈信息 -->
+		<div class="mt-16 bg-gray-50 rounded-lg p-8">
+			<h2 class="text-2xl font-bold text-center mb-8">🛠️ 技术栈</h2>
+			<div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+				<div>
+					<div class="text-3xl mb-2">🚀</div>
+					<h3 class="font-semibold">Astro 5.8.0</h3>
+					<p class="text-sm text-gray-600">现代静态站点生成器</p>
+				</div>
+				<div>
+					<div class="text-3xl mb-2">⚛️</div>
+					<h3 class="font-semibold">React 19</h3>
+					<p class="text-sm text-gray-600">用户界面库</p>
+				</div>
+				<div>
+					<div class="text-3xl mb-2">💚</div>
+					<h3 class="font-semibold">Vue 3</h3>
+					<p class="text-sm text-gray-600">渐进式框架</p>
+				</div>
+				<div>
+					<div class="text-3xl mb-2">🎨</div>
+					<h3 class="font-semibold">Tailwind CSS</h3>
+					<p class="text-sm text-gray-600">实用优先的 CSS 框架</p>
+				</div>
+				<div>
+					<div class="text-3xl mb-2">🗄️</div>
+					<h3 class="font-semibold">SQLite</h3>
+					<p class="text-sm text-gray-600">轻量级数据库</p>
+				</div>
+				<div>
+					<div class="text-3xl mb-2">🔒</div>
+					<h3 class="font-semibold">bcrypt</h3>
+					<p class="text-sm text-gray-600">密码加密</p>
+				</div>
+				<div>
+					<div class="text-3xl mb-2">📝</div>
+					<h3 class="font-semibold">TypeScript</h3>
+					<p class="text-sm text-gray-600">类型安全</p>
+				</div>
+				<div>
+					<div class="text-3xl mb-2">⚡</div>
+					<h3 class="font-semibold">Vite</h3>
+					<p class="text-sm text-gray-600">快速构建工具</p>
+				</div>
+			</div>
+		</div>
+
+		<!-- 功能特性 -->
+		<div class="mt-16">
+			<h2 class="text-2xl font-bold text-center mb-8">✨ 功能特性</h2>
+			<div class="grid md:grid-cols-2 gap-8">
+				<div>
+					<h3 class="text-lg font-semibold mb-4">🎯 Astro Actions</h3>
+					<ul class="space-y-2 text-gray-600">
+						<li>• 类型安全的服务端操作</li>
+						<li>• 表单数据验证</li>
+						<li>• 错误处理和状态管理</li>
+						<li>• 文件上传支持</li>
+					</ul>
+				</div>
+				<div>
+					<h3 class="text-lg font-semibold mb-4">🗄️ 数据库集成</h3>
+					<ul class="space-y-2 text-gray-600">
+						<li>• SQLite 数据库</li>
+						<li>• 用户认证系统</li>
+						<li>• 任务调度管理</li>
+						<li>• 数据统计分析</li>
+					</ul>
+				</div>
+				<div>
+					<h3 class="text-lg font-semibold mb-4">⚛️ 组件生态</h3>
+					<ul class="space-y-2 text-gray-600">
+						<li>• React 组件集成</li>
+						<li>• Vue 组件支持</li>
+						<li>• 组件间通信</li>
+						<li>• 状态管理</li>
+					</ul>
+				</div>
+				<div>
+					<h3 class="text-lg font-semibold mb-4">🔌 API 服务</h3>
+					<ul class="space-y-2 text-gray-600">
+						<li>• RESTful API 路由</li>
+						<li>• 中间件支持</li>
+						<li>• 请求验证</li>
+						<li>• 响应格式化</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</main>
+</Layout>
+
+<style>
+	.text-gradient {
+		background-image: var(--accent-gradient);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-size: 400%;
+		background-position: 0%;
+	}
+	
+	.card {
+		@apply bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow;
+	}
+	
+	.btn-primary {
 		<h1 class="text-4xl font-bold mb-6 text-center dark:text-white">
 			🚀 Astro 多框架演示项目
 		</h1>
@@ -65,6 +248,88 @@ import Layout from '../layouts/Layout.astro';
 						页面2
 					</a>
 				</div>
+			</div>
+			
+			<!-- Astro Actions -->
+			<div class="bg-gradient-to-br from-indigo-100 to-blue-100 dark:from-indigo-900 dark:to-blue-900 p-6 rounded-lg shadow-lg">
+				<h3 class="text-xl font-bold mb-3 text-indigo-600 dark:text-indigo-400">
+					🚀 Astro Actions
+				</h3>
+				<p class="text-gray-700 dark:text-gray-300 mb-4">
+					类型安全的服务端函数，支持表单处理、文件上传、数据验证等
+				</p>
+				<a href="/actions-demo" 
+				   class="block w-full bg-indigo-500 hover:bg-indigo-600 text-white text-center py-2 px-4 rounded">
+					查看 Actions 演示
+				</a>
+			</div>
+			
+			<!-- 服务器群岛 -->
+			<div class="bg-gradient-to-br from-emerald-100 to-green-100 dark:from-emerald-900 dark:to-green-900 p-6 rounded-lg shadow-lg">
+				<h3 class="text-xl font-bold mb-3 text-emerald-600 dark:text-emerald-400">
+					🏝️ 服务器群岛
+				</h3>
+				<p class="text-gray-700 dark:text-gray-300 mb-4">
+					服务端渲染组件，支持延迟加载和混合渲染
+				</p>
+				<a href="/server-islands" 
+				   class="block w-full bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2 px-4 rounded">
+					查看服务器群岛
+				</a>
+			</div>
+			
+			<!-- API 演示 -->
+			<div class="bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 p-6 rounded-lg shadow-lg">
+				<h3 class="text-xl font-bold mb-3 text-purple-600 dark:text-purple-400">
+					🔗 API 演示
+				</h3>
+				<p class="text-gray-700 dark:text-gray-300 mb-4">
+					API 路由和数据获取演示
+				</p>
+				<a href="/api-demo" 
+				   class="block w-full bg-purple-500 hover:bg-purple-600 text-white text-center py-2 px-4 rounded">
+					查看 API 演示
+				</a>
+			</div>
+
+			<!-- 新增：服务功能演示卡片 -->
+			<div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+				<div class="text-4xl mb-4">🛠️</div>
+				<h3 class="text-xl font-semibold mb-2">服务功能演示</h3>
+				<p class="text-gray-600 mb-4">
+					定时任务、后台服务、健康监控、中间件等服务端功能展示
+				</p>
+				<a href="/services-demo" class="inline-block bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded transition-colors">
+					查看演示
+				</a>
+			</div>
+
+			<!-- SQLite 数据库演示 -->
+			<div class="bg-gradient-to-br from-cyan-100 to-blue-100 dark:from-cyan-900 dark:to-blue-900 p-6 rounded-lg shadow-lg">
+				<h3 class="text-xl font-bold mb-3 text-cyan-600 dark:text-cyan-400">
+					🗄️ SQLite 数据库
+				</h3>
+				<p class="text-gray-700 dark:text-gray-300 mb-4">
+					数据库集成、用户管理、任务调度、数据统计等功能演示
+				</p>
+				<a href="/database-demo" 
+				   class="block w-full bg-cyan-500 hover:bg-cyan-600 text-white text-center py-2 px-4 rounded">
+					查看数据库演示
+				</a>
+			</div>
+
+			<!-- 定时任务演示 -->
+			<div class="bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900 dark:to-orange-900 p-6 rounded-lg shadow-lg">
+				<h3 class="text-xl font-bold mb-3 text-amber-600 dark:text-amber-400">
+					⏰ 定时任务
+				</h3>
+				<p class="text-gray-700 dark:text-gray-300 mb-4">
+					Cron 任务调度、后台服务、任务监控和日志记录
+				</p>
+				<a href="/scheduler-demo" 
+				   class="block w-full bg-amber-500 hover:bg-amber-600 text-white text-center py-2 px-4 rounded">
+					查看任务调度
+				</a>
 			</div>
 		</div>
 		

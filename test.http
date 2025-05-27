@@ -1,0 +1,45 @@
+### 测试 Astro Actions - userGetAll
+POST http://localhost:3000/_actions/userGetAll
+Content-Type: application/json
+
+{
+  "limit": 20,
+  "offset": 0
+}
+
+### 测试 Astro Actions - userRegister
+POST http://localhost:3000/_actions/userRegister
+Content-Type: application/json
+
+{
+  "username": "testuser123",
+  "email": "test123@example.com",
+  "password": "password123",
+  "confirmPassword": "password123",
+  "role": "user"
+}
+
+### 测试 Astro Actions - taskGetAll
+POST http://localhost:3000/_actions/taskGetAll
+Content-Type: application/json
+
+{}
+
+### 测试 Astro Actions - statsGetDashboard
+POST http://localhost:3000/_actions/statsGetDashboard
+Content-Type: application/json
+
+{}
+
+### 测试 Astro Actions - hello (简单测试)
+POST http://localhost:3000/_actions/hello
+Content-Type: application/json
+
+{
+  "name": "测试用户"
+}
+
+
+
+
+

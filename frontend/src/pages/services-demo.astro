@@ -1,0 +1,180 @@
+---
+// 服务管理演示页面
+import Layout from '../layouts/Layout.astro';
+import ServicesManager from '../components/ServicesManager.tsx';
+---
+
+<Layout title="Astro 服务功能演示">
+  <main class="container mx-auto px-4 py-8">
+    <div class="max-w-6xl mx-auto">
+      <!-- 页面标题 -->
+      <div class="text-center mb-12">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">
+          🛠️ Astro 服务功能演示
+        </h1>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+          展示 Astro 除了 Actions 之外的其他服务功能，包括定时任务、后台服务、中间件等
+        </p>
+      </div>
+
+      <!-- 功能特性 -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="text-3xl mb-4">⏰</div>
+          <h3 class="text-xl font-semibold mb-2">定时任务</h3>
+          <p class="text-gray-600">
+            支持 Cron 表达式的定时任务调度，可以执行数据清理、同步、报告生成等任务
+          </p>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="text-3xl mb-4">🔧</div>
+          <h3 class="text-xl font-semibold mb-2">后台服务</h3>
+          <p class="text-gray-600">
+            管理长期运行的后台服务，如 WebSocket 服务器、文件监控、缓存管理等
+          </p>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="text-3xl mb-4">🔍</div>
+          <h3 class="text-xl font-semibold mb-2">健康监控</h3>
+          <p class="text-gray-600">
+            实时监控服务状态、性能指标，提供健康检查和故障恢复机制
+          </p>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="text-3xl mb-4">🌐</div>
+          <h3 class="text-xl font-semibold mb-2">中间件服务</h3>
+          <p class="text-gray-600">
+            通过中间件提供横切关注点，如认证、日志、限流、缓存等功能
+          </p>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="text-3xl mb-4">📊</div>
+          <h3 class="text-xl font-semibold mb-2">实时指标</h3>
+          <p class="text-gray-600">
+            收集和展示系统运行指标，包括内存使用、服务状态、错误统计等
+          </p>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="text-3xl mb-4">🔄</div>
+          <h3 class="text-xl font-semibold mb-2">自动恢复</h3>
+          <p class="text-gray-600">
+            支持服务自动重启、故障转移，确保系统的高可用性和稳定性
+          </p>
+        </div>
+      </div>
+
+      <!-- 服务管理界面 -->
+      <ServicesManager client:load />
+
+      <!-- 使用指南 -->
+      <div class="mt-12 bg-gray-50 rounded-lg p-8">
+        <h2 class="text-2xl font-bold mb-6">🚀 使用指南</h2>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+          <div>
+            <h3 class="text-lg font-semibold mb-4">定时任务功能</h3>
+            <ul class="space-y-2 text-gray-700">
+              <li>• 支持标准 Cron 表达式调度</li>
+              <li>• 可以启用/禁用任务</li>
+              <li>• 支持立即执行任务</li>
+              <li>• 查看任务执行历史和状态</li>
+              <li>• 动态添加新的定时任务</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-semibold mb-4">后台服务管理</h3>
+            <ul class="space-y-2 text-gray-700">
+              <li>• 启动/停止后台服务</li>
+              <li>• 实时监控服务状态</li>
+              <li>• 服务心跳检测</li>
+              <li>• 错误统计和恢复</li>
+              <li>• 服务重启和故障转移</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mt-8">
+          <h3 class="text-lg font-semibold mb-4">API 端点</h3>
+          <div class="bg-white rounded-lg p-4">
+            <div class="grid md:grid-cols-2 gap-4 text-sm">
+              <div>
+                <code class="bg-blue-100 px-2 py-1 rounded">GET /api/health</code>
+                <p class="text-gray-600 mt-1">服务健康检查</p>
+              </div>
+              <div>
+                <code class="bg-green-100 px-2 py-1 rounded">GET /api/metrics</code>
+                <p class="text-gray-600 mt-1">系统性能指标</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 代码示例 -->
+      <div class="mt-12 bg-gray-900 text-white rounded-lg p-8">
+        <h2 class="text-2xl font-bold mb-6">💻 代码示例</h2>
+        
+        <div class="space-y-6">
+          <div>
+            <h3 class="text-lg font-semibold mb-3 text-blue-300">定时任务定义</h3>
+            <pre class="bg-gray-800 p-4 rounded overflow-x-auto"><code>{`// 添加定时任务
+taskScheduler.addTask({
+  id: 'daily-backup',
+  name: '每日数据备份',
+  schedule: '0 3 * * *', // 每天凌晨3点
+  handler: 'backupData',
+  enabled: true
+});`}</code></pre>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-semibold mb-3 text-green-300">后台服务启动</h3>
+            <pre class="bg-gray-800 p-4 rounded overflow-x-auto"><code>{`// 启动后台服务
+await backgroundService.startService('websocket-server');
+
+// 检查服务状态
+const status = backgroundService.getServiceStatus('websocket-server');
+console.log(status); // { name: 'WebSocket 服务器', status: 'running', ... }`}</code></pre>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-semibold mb-3 text-yellow-300">中间件集成</h3>
+            <pre class="bg-gray-800 p-4 rounded overflow-x-auto"><code>{`// astro.config.mjs
+export default defineConfig({
+  // ... 其他配置
+  middleware: [
+    servicesMiddleware, // 服务中间件
+    authMiddleware,     // 认证中间件
+    loggingMiddleware   // 日志中间件
+  ]
+});`}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- 导航链接 -->
+      <div class="mt-12 text-center">
+        <div class="flex flex-wrap justify-center gap-4">
+          <a href="/" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition-colors">
+            返回首页
+          </a>
+          <a href="/actions-demo" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg transition-colors">
+            Actions 演示
+          </a>
+          <a href="/api/health" target="_blank" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg transition-colors">
+            健康检查 API
+          </a>
+          <a href="/api/metrics" target="_blank" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg transition-colors">
+            系统指标 API
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout> 

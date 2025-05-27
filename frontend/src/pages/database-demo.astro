@@ -1,0 +1,221 @@
+---
+// 数据库演示页面
+import Layout from '../layouts/Layout.astro';
+import DatabaseDemoComponent from '../components/DatabaseDemo.tsx';
+---
+
+<Layout title="SQLite 数据库演示">
+  <main class="container mx-auto px-4 py-8">
+    <div class="max-w-6xl mx-auto">
+      <!-- 页面标题 -->
+      <div class="text-center mb-12">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">
+          🗄️ SQLite 数据库演示
+        </h1>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+          展示 Astro Actions 与 SQLite 数据库的集成，包括用户管理、任务调度、数据统计等功能
+        </p>
+      </div>
+
+      <!-- 功能特性 -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="text-3xl mb-4">👥</div>
+          <h3 class="text-xl font-semibold mb-2">用户管理</h3>
+          <p class="text-gray-600">
+            完整的用户 CRUD 操作，包括注册、查询、更新、删除等功能
+          </p>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="text-3xl mb-4">📋</div>
+          <h3 class="text-xl font-semibold mb-2">任务管理</h3>
+          <p class="text-gray-600">
+            定时任务的创建、执行、监控，支持任务日志和状态跟踪
+          </p>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="text-3xl mb-4">📊</div>
+          <h3 class="text-xl font-semibold mb-2">数据统计</h3>
+          <p class="text-gray-600">
+            实时数据统计和分析，包括用户数量、任务状态等指标
+          </p>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="text-3xl mb-4">🔐</div>
+          <h3 class="text-xl font-semibold mb-2">安全认证</h3>
+          <p class="text-gray-600">
+            密码加密存储、用户角色管理、安全的数据访问控制
+          </p>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="text-3xl mb-4">🔄</div>
+          <h3 class="text-xl font-semibold mb-2">事务支持</h3>
+          <p class="text-gray-600">
+            数据库事务处理，确保数据一致性和完整性
+          </p>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="text-3xl mb-4">📝</div>
+          <h3 class="text-xl font-semibold mb-2">日志记录</h3>
+          <p class="text-gray-600">
+            完整的操作日志记录，便于调试和监控系统运行状态
+          </p>
+        </div>
+      </div>
+
+      <!-- 数据库演示组件 -->
+      <DatabaseDemoComponent client:load />
+
+      <!-- 技术说明 -->
+      <div class="mt-12 bg-gray-50 rounded-lg p-8">
+        <h2 class="text-2xl font-bold mb-6">🔧 技术实现</h2>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+          <div>
+            <h3 class="text-lg font-semibold mb-4">数据库层</h3>
+            <ul class="space-y-2 text-gray-700">
+              <li>• SQLite 连接池管理</li>
+              <li>• 类型安全的查询接口</li>
+              <li>• 事务支持和错误处理</li>
+              <li>• 连接状态监控</li>
+              <li>• 自动重连机制</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-semibold mb-4">模型层</h3>
+            <ul class="space-y-2 text-gray-700">
+              <li>• 用户模型 (UserModel)</li>
+              <li>• 任务模型 (TaskModel)</li>
+              <li>• 日志模型 (TaskLog)</li>
+              <li>• 数据验证和转换</li>
+              <li>• 关联查询支持</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-semibold mb-4">Actions 层</h3>
+            <ul class="space-y-2 text-gray-700">
+              <li>• 输入验证 (Zod Schema)</li>
+              <li>• 业务逻辑封装</li>
+              <li>• 错误处理和响应</li>
+              <li>• 类型安全的接口</li>
+              <li>• 统一的返回格式</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-semibold mb-4">安全特性</h3>
+            <ul class="space-y-2 text-gray-700">
+              <li>• bcrypt 密码加密</li>
+              <li>• SQL 注入防护</li>
+              <li>• 输入数据验证</li>
+              <li>• 用户权限控制</li>
+              <li>• 敏感信息过滤</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mt-8">
+          <h3 class="text-lg font-semibold mb-4">数据库表结构</h3>
+          <div class="bg-white rounded-lg p-4">
+            <div class="grid md:grid-cols-2 gap-4 text-sm">
+              <div>
+                <h4 class="font-medium mb-2">users 表</h4>
+                <ul class="text-gray-600 space-y-1">
+                  <li>• id (主键)</li>
+                  <li>• username (唯一)</li>
+                  <li>• email (唯一)</li>
+                  <li>• password_hash</li>
+                  <li>• role (admin/user)</li>
+                  <li>• created_at, updated_at</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="font-medium mb-2">tasks 表</h4>
+                <ul class="text-gray-600 space-y-1">
+                  <li>• id (主键)</li>
+                  <li>• name, description</li>
+                  <li>• schedule (cron 表达式)</li>
+                  <li>• handler (处理器名称)</li>
+                  <li>• enabled, status</li>
+                  <li>• last_run, error_count</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="font-medium mb-2">task_logs 表</h4>
+                <ul class="text-gray-600 space-y-1">
+                  <li>• id (主键)</li>
+                  <li>• task_id (外键)</li>
+                  <li>• status (started/completed/failed)</li>
+                  <li>• message, duration_ms</li>
+                  <li>• created_at</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="font-medium mb-2">todos 表</h4>
+                <ul class="text-gray-600 space-y-1">
+                  <li>• id (主键)</li>
+                  <li>• user_id (外键)</li>
+                  <li>• title, description</li>
+                  <li>• priority, completed</li>
+                  <li>• due_date</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 使用说明 -->
+      <div class="mt-12 bg-blue-50 rounded-lg p-8">
+        <h2 class="text-2xl font-bold mb-6 text-blue-900">📋 使用说明</h2>
+        
+        <div class="space-y-4 text-blue-800">
+          <div>
+            <h3 class="font-semibold mb-2">1. 数据库配置</h3>
+            <p>确保 SQLite 服务运行，并配置正确的连接参数。如果没有数据库连接，系统会显示模拟数据。</p>
+          </div>
+          
+          <div>
+            <h3 class="font-semibold mb-2">2. 测试功能</h3>
+            <p>点击"创建测试用户"和"创建测试任务"按钮来测试数据库操作功能。</p>
+          </div>
+          
+          <div>
+            <h3 class="font-semibold mb-2">3. 查看数据</h3>
+            <p>表格会显示数据库中的实际数据，包括用户信息、任务状态等。</p>
+          </div>
+          
+          <div>
+            <h3 class="font-semibold mb-2">4. 监控统计</h3>
+            <p>顶部的统计卡片显示实时的数据库统计信息。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 导航链接 -->
+      <div class="mt-12 text-center">
+        <div class="flex flex-wrap justify-center gap-4">
+          <a href="/" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition-colors">
+            返回首页
+          </a>
+          <a href="/actions-demo" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg transition-colors">
+            Actions 演示
+          </a>
+          <a href="/services-demo" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg transition-colors">
+            服务演示
+          </a>
+          <a href="/api-test" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg transition-colors">
+            API 测试
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout> 

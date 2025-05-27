@@ -1,0 +1,228 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Actions 测试">
+  <main class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6">Actions 测试页面</h1>
+    
+    <div class="space-y-6">
+      <!-- 用户注册测试 -->
+      <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-4">用户注册测试</h2>
+        <form id="userForm" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium mb-1">用户名</label>
+            <input type="text" name="username" required class="w-full border rounded px-3 py-2" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">邮箱</label>
+            <input type="email" name="email" required class="w-full border rounded px-3 py-2" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">密码</label>
+            <input type="password" name="password" required class="w-full border rounded px-3 py-2" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">确认密码</label>
+            <input type="password" name="confirmPassword" required class="w-full border rounded px-3 py-2" />
+          </div>
+          <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            注册用户
+          </button>
+        </form>
+        <div id="userResult" class="mt-4"></div>
+      </div>
+
+      <!-- 计算器测试 -->
+      <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-4">计算器测试</h2>
+        <form id="calcForm" class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">数字 A</label>
+              <input type="number" name="a" required class="w-full border rounded px-3 py-2" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">数字 B</label>
+              <input type="number" name="b" required class="w-full border rounded px-3 py-2" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">操作</label>
+            <select name="operation" class="w-full border rounded px-3 py-2">
+              <option value="add">加法</option>
+              <option value="subtract">减法</option>
+              <option value="multiply">乘法</option>
+              <option value="divide">除法</option>
+            </select>
+          </div>
+          <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+            计算
+          </button>
+        </form>
+        <div id="calcResult" class="mt-4"></div>
+      </div>
+
+      <!-- SQLite 数据库测试 -->
+      <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-4">SQLite 数据库测试</h2>
+        <div class="space-y-4">
+          <button id="testStats" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">
+            获取数据库统计
+          </button>
+          <button id="testUsers" class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600">
+            获取用户列表
+          </button>
+          <button id="testTasks" class="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600">
+            获取任务列表
+          </button>
+        </div>
+        <div id="dbResult" class="mt-4"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // 用户注册表单
+    document.getElementById('userForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target as HTMLFormElement);
+      const resultDiv = document.getElementById('userResult');
+      
+      try {
+        const response = await fetch('/_actions/userRegister', {
+          method: 'POST',
+          body: formData
+        });
+        
+        const result = await response.json();
+        if (resultDiv) {
+          resultDiv.innerHTML = `<div class="p-3 rounded ${result.data?.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+            ${JSON.stringify(result, null, 2)}
+          </div>`;
+        }
+      } catch (error) {
+        if (resultDiv) {
+          resultDiv.innerHTML = `<div class="p-3 rounded bg-red-100 text-red-800">
+            错误: ${error.message}
+          </div>`;
+        }
+      }
+    });
+
+    // 计算器表单
+    document.getElementById('calcForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target as HTMLFormElement);
+      const data = {
+        a: parseFloat(formData.get('a') as string),
+        b: parseFloat(formData.get('b') as string),
+        operation: formData.get('operation') as string
+      };
+      const resultDiv = document.getElementById('calcResult');
+      
+      try {
+        const response = await fetch('/_actions/calculate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        if (resultDiv) {
+          resultDiv.innerHTML = `<div class="p-3 rounded ${result.data?.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+            ${JSON.stringify(result, null, 2)}
+          </div>`;
+        }
+      } catch (error) {
+        if (resultDiv) {
+          resultDiv.innerHTML = `<div class="p-3 rounded bg-red-100 text-red-800">
+            错误: ${error.message}
+          </div>`;
+        }
+      }
+    });
+
+    // 数据库统计测试
+    document.getElementById('testStats')?.addEventListener('click', async () => {
+      const resultDiv = document.getElementById('dbResult');
+      
+      try {
+        const response = await fetch('/_actions/statsGetDashboard', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({})
+        });
+        
+        const result = await response.json();
+        if (resultDiv) {
+          resultDiv.innerHTML = `<div class="p-3 rounded ${result.data?.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+            <h3 class="font-semibold">数据库统计:</h3>
+            <pre class="mt-2 text-sm">${JSON.stringify(result, null, 2)}</pre>
+          </div>`;
+        }
+      } catch (error) {
+        if (resultDiv) {
+          resultDiv.innerHTML = `<div class="p-3 rounded bg-red-100 text-red-800">
+            错误: ${error.message}
+          </div>`;
+        }
+      }
+    });
+
+    // 用户列表测试
+    document.getElementById('testUsers')?.addEventListener('click', async () => {
+      const resultDiv = document.getElementById('dbResult');
+      
+      try {
+        const response = await fetch('/_actions/userGetAll', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ limit: 10, offset: 0 })
+        });
+        
+        const result = await response.json();
+        if (resultDiv) {
+          resultDiv.innerHTML = `<div class="p-3 rounded ${result.data?.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+            <h3 class="font-semibold">用户列表:</h3>
+            <pre class="mt-2 text-sm">${JSON.stringify(result, null, 2)}</pre>
+          </div>`;
+        }
+      } catch (error) {
+        if (resultDiv) {
+          resultDiv.innerHTML = `<div class="p-3 rounded bg-red-100 text-red-800">
+            错误: ${error.message}
+          </div>`;
+        }
+      }
+    });
+
+    // 任务列表测试
+    document.getElementById('testTasks')?.addEventListener('click', async () => {
+      const resultDiv = document.getElementById('dbResult');
+      
+      try {
+        const response = await fetch('/_actions/taskGetAll', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({})
+        });
+        
+        const result = await response.json();
+        if (resultDiv) {
+          resultDiv.innerHTML = `<div class="p-3 rounded ${result.data?.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+            <h3 class="font-semibold">任务列表:</h3>
+            <pre class="mt-2 text-sm">${JSON.stringify(result, null, 2)}</pre>
+          </div>`;
+        }
+      } catch (error) {
+        if (resultDiv) {
+          resultDiv.innerHTML = `<div class="p-3 rounded bg-red-100 text-red-800">
+            错误: ${error.message}
+          </div>`;
+        }
+      }
+    });
+  </script>
+</Layout> 

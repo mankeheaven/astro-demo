@@ -2,6 +2,7 @@ import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import react from '@astrojs/react';
 import vue from '@astrojs/vue';
+import node from '@astrojs/node';
 import { loadEnvConfig, getCurrentEnv, getEnvConfig } from './config/env.config.js';
 
 // 获取当前环境
@@ -19,10 +20,13 @@ console.log(`📁 输出目录: ${envConfig.outDir}`);
 // https://astro.build/config
 export default defineConfig({
   integrations: [tailwind(), react(), vue()],
+  adapter: node({
+    mode: "standalone"
+  }),
   server: {
     port: 3000,
   },
-  output: 'static',
+  output: 'server',
   outDir: envConfig.outDir,
   base: envConfig.base,
   build: {

@@ -4,6 +4,8 @@ interface Props {
 }
 
 const { title } = Astro.props;
+
+const year = new Date().getFullYear()
 ---
 
 <!DOCTYPE html>
@@ -33,7 +35,7 @@ const { title } = Astro.props;
 
 		<footer class="bg-green-800 text-white p-3">
 			<div class="container mx-auto text-center text-sm">
-				<p>© {new Date().getFullYear()} 简化版布局 | <a href="/about" class="underline">关于</a></p>
+				<p>© {year} 简化版布局 | <a href="/about" class="underline">关于</a></p>
 			</div>
 		</footer>
 	</body>

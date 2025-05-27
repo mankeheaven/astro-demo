@@ -1,0 +1,146 @@
+---
+// 这是一个服务器群岛组件
+// 它将在服务器端渲染，但可以在客户端进行水合
+
+interface Props {
+  title?: string;
+  userId?: string;
+}
+
+const { title = "服务器群岛示例", userId } = Astro.props;
+
+// 模拟服务器端数据获取
+async function fetchServerData() {
+  // 模拟异步数据获取
+  await new Promise(resolve => setTimeout(resolve, 100));
+  
+  return {
+    serverTime: new Date().toLocaleString('zh-CN'),
+    randomNumber: Math.floor(Math.random() * 1000),
+    serverInfo: {
+      nodeVersion: process.version,
+      platform: process.platform,
+      uptime: Math.floor(process.uptime())
+    }
+  };
+}
+
+const serverData = await fetchServerData();
+
+// 模拟用户数据获取
+async function fetchUserData(userId: string) {
+  if (!userId) return null;
+  
+  // 模拟数据库查询
+  await new Promise(resolve => setTimeout(resolve, 50));
+  
+  return {
+    id: userId,
+    name: `用户${userId}`,
+    lastLogin: new Date(Date.now() - Math.random() * 86400000).toLocaleString('zh-CN'),
+    preferences: {
+      theme: Math.random() > 0.5 ? 'dark' : 'light',
+      language: 'zh-CN'
+    }
+  };
+}
+
+const userData = userId ? await fetchUserData(userId) : null;
+---
+
+<div class="server-island bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg shadow-lg border border-blue-200">
+  <h2 class="text-2xl font-bold text-blue-800 mb-4 flex items-center">
+    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2"></path>
+    </svg>
+    {title}
+  </h2>
+  
+  <div class="grid md:grid-cols-2 gap-6">
+    <!-- 服务器信息 -->
+    <div class="bg-white p-4 rounded-lg shadow">
+      <h3 class="text-lg font-semibold text-gray-800 mb-3">🖥️ 服务器信息</h3>
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between">
+          <span class="text-gray-600">服务器时间:</span>
+          <span class="font-mono text-blue-600">{serverData.serverTime}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-600">随机数:</span>
+          <span class="font-mono text-green-600">{serverData.randomNumber}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-600">Node.js 版本:</span>
+          <span class="font-mono text-purple-600">{serverData.serverInfo.nodeVersion}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-600">平台:</span>
+          <span class="font-mono text-orange-600">{serverData.serverInfo.platform}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-600">运行时间:</span>
+          <span class="font-mono text-red-600">{serverData.serverInfo.uptime}秒</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 用户信息 -->
+    <div class="bg-white p-4 rounded-lg shadow">
+      <h3 class="text-lg font-semibold text-gray-800 mb-3">👤 用户信息</h3>
+      {userData ? (
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between">
+            <span class="text-gray-600">用户ID:</span>
+            <span class="font-mono text-blue-600">{userData.id}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">用户名:</span>
+            <span class="font-semibold text-green-600">{userData.name}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">最后登录:</span>
+            <span class="font-mono text-purple-600">{userData.lastLogin}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">主题:</span>
+            <span class="font-semibold text-orange-600">{userData.preferences.theme}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">语言:</span>
+            <span class="font-semibold text-red-600">{userData.preferences.language}</span>
+          </div>
+        </div>
+      ) : (
+        <div class="text-gray-500 text-center py-4">
+          <p>未提供用户ID</p>
+          <p class="text-xs mt-1">请在URL中添加 ?userId=123 参数</p>
+        </div>
+      )}
+    </div>
+  </div>
+
+  <!-- 渲染信息 -->
+  <div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+    <p class="text-sm text-yellow-800">
+      <strong>🏝️ 服务器群岛:</strong> 此组件在服务器端渲染，包含动态数据获取。
+      每次页面加载时，服务器时间和随机数都会更新。
+    </p>
+  </div>
+</div>
+
+<style>
+  .server-island {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style> 

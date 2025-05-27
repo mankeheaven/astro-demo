@@ -1,0 +1,94 @@
+---
+// API 测试页面
+---
+
+<html>
+<head>
+  <title>API 测试</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    .test-button { 
+      background: #3b82f6; 
+      color: white; 
+      padding: 10px 20px; 
+      border: none; 
+      border-radius: 5px; 
+      margin: 10px; 
+      cursor: pointer; 
+    }
+    .test-button:hover { background: #2563eb; }
+    .result { 
+      background: #f3f4f6; 
+      padding: 20px; 
+      border-radius: 5px; 
+      margin: 20px 0; 
+      white-space: pre-wrap; 
+    }
+  </style>
+</head>
+<body>
+  <h1>🧪 API 端点测试</h1>
+  
+  <div>
+    <button class="test-button" onclick="testHealth()">测试健康检查 (/api/health)</button>
+    <button class="test-button" onclick="testMetrics()">测试系统指标 (/api/metrics)</button>
+    <button class="test-button" onclick="testService()">测试服务控制</button>
+  </div>
+
+  <div id="result" class="result">点击按钮测试 API 端点...</div>
+
+  <script>
+    async function testHealth() {
+      try {
+        const response = await fetch('/api/health');
+        const data = await response.json();
+        document.getElementById('result').textContent = 
+          `✅ 健康检查成功 (${response.status})\n\n` + 
+          JSON.stringify(data, null, 2);
+      } catch (error) {
+        document.getElementById('result').textContent = 
+          `❌ 健康检查失败\n\n${error.message}`;
+      }
+    }
+
+    async function testMetrics() {
+      try {
+        const response = await fetch('/api/metrics');
+        const data = await response.json();
+        document.getElementById('result').textContent = 
+          `✅ 系统指标成功 (${response.status})\n\n` + 
+          JSON.stringify(data, null, 2);
+      } catch (error) {
+        document.getElementById('result').textContent = 
+          `❌ 系统指标失败\n\n${error.message}`;
+      }
+    }
+
+    async function testService() {
+      try {
+        const response = await fetch('/api/services/websocket-server?action=restart', {
+          method: 'POST'
+        });
+        const data = await response.json();
+        document.getElementById('result').textContent = 
+          `✅ 服务控制成功 (${response.status})\n\n` + 
+          JSON.stringify(data, null, 2);
+      } catch (error) {
+        document.getElementById('result').textContent = 
+          `❌ 服务控制失败\n\n${error.message}`;
+      }
+    }
+  </script>
+
+  <div style="margin-top: 40px;">
+    <h2>📋 测试说明</h2>
+    <ul>
+      <li><strong>健康检查</strong>: 返回所有服务的状态信息</li>
+      <li><strong>系统指标</strong>: 返回系统性能和资源使用情况</li>
+      <li><strong>服务控制</strong>: 测试服务的启动/停止/重启功能</li>
+    </ul>
+    
+    <p><a href="/services-demo">← 返回服务演示页面</a></p>
+  </div>
+</body>
+</html> 
